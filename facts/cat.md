@@ -1,1 +1,1 @@
-* Contrary to popular belief, cats indeed have only one life
+* Contrary to popular belief, cats indeed have only one life.
