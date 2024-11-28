@@ -1,0 +1,34 @@
+name: Line Length Check
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+      - feature_line_length_check
+
+jobs:
+  check-line-length:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Run line-length check
+      run: |
+        MAX_LENGTH=80
+        FILES=$(git ls-files 'facts/*.py' 'facts/*.md' 'facts/*.txt')
+        echo "Files detected: $FILES"
+        for FILE in $FILES; do
+          echo "Checking $FILE"
+          if !(awk -v len=$MAX_LENGTH 'length($0) > len { print FILENAME ":" NR ": " $0; exit 1 }' $FILE); then
+            ERROR_FOUND=true
+            echo "Line length exceeds $MAX_LENGTH in $FILE"
+          fi
+        done
+        if [ "$ERROR_FOUND" = true ]; then 
+          exit 1
+        fi  
+        echo "All lines are within the $MAX_LENGTH limits."
